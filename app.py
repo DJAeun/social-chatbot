@@ -43,13 +43,26 @@ def load_chat_history():
             st.session_state.chat_history = history
             st.session_state.message_count = len(history)
         except DatabaseError as e:
-            st.error("대화 히스토리를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.")
+            # 데이터베이스 오류 시 빈 히스토리로 시작
+            st.session_state.chat_history = []
+            st.session_state.message_count = 0
             logger = get_audit_logger()
             logger.log_security_event(
                 event_type="error",
                 status="error",
                 session_id=st.session_state.session_id,
                 message=f"Failed to load chat history: {str(e)}"
+            )
+        except Exception as e:
+            # 예상치 못한 오류도 처리
+            st.session_state.chat_history = []
+            st.session_state.message_count = 0
+            logger = get_audit_logger()
+            logger.log_security_event(
+                event_type="error",
+                status="error",
+                session_id=st.session_state.session_id,
+                message=f"Unexpected error loading chat history: {str(e)}"
             )
 
 
@@ -278,8 +291,9 @@ def apply_dprk_style():
             border: 3px solid #d92337;
             border-radius: 0;
             padding: 2rem;
-            padding-left: 180px;
             padding-bottom: 6rem;
+            max-width: 900px;
+            margin: 0 auto;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
         }
 
@@ -289,7 +303,7 @@ def apply_dprk_style():
             color: #ffd700 !important;
             text-align: center;
             padding: 1.5rem;
-            margin: -2rem -2rem 2rem -180px;
+            margin: -2rem -2rem 2rem -2rem;
             border-bottom: 5px solid #ffd700;
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
@@ -350,6 +364,7 @@ def apply_dprk_style():
         .stChatMessage {
             border: 2px solid #d92337;
             border-radius: 8px;
+            max-width: 100%;
         }
 
         /* 사용자 메시지 - 금색 배경에 검은색 텍스트 */
@@ -385,6 +400,8 @@ def apply_dprk_style():
         .stChatInput {
             border: 3px solid #d92337;
             border-radius: 5px;
+            max-width: 900px;
+            margin: 0 auto;
         }
 
         .stChatInput textarea {
@@ -395,6 +412,12 @@ def apply_dprk_style():
 
         .stChatInput textarea::placeholder {
             color: #cccccc !important;
+        }
+
+        /* 채팅 입력창을 하단에 고정 */
+        .stChatInputContainer {
+            max-width: 900px;
+            margin: 0 auto;
         }
 
         /* 스피너 */

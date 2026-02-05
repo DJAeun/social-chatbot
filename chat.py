@@ -47,12 +47,11 @@ def get_chat_response(
         # 현재 사용자 메시지 추가
         messages.append({"role": "user", "content": user_message})
 
-        # API 호출
+        # API 호출 (gpt-5-nano는 reasoning 모델이라 충분한 토큰 필요)
         response = client.chat.completions.create(
             model="gpt-5-nano",
             messages=messages,
-            temperature=0.7,
-            max_tokens=500
+            max_completion_tokens=40000
         )
 
         # 응답 추출

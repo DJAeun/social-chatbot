@@ -109,14 +109,24 @@ class SupabaseClient:
 
             # Supabase 응답을 OpenAI 형식으로 변환
             messages = []
-            for row in response.data:
-                messages.append({
-                    'role': row['role'],
-                    'content': row['content']
-                })
+            if response.data:
+                for row in response.data:
+                    messages.append({
+                        'role': row['role'],
+                        'content': row['content']
+                    })
 
             return messages
 
+        except AttributeError as e:
+            # 테이블이 없거나 응답 형식이 잘못된 경우
+            self.logger.log_security_event(
+                event_type="database_read",
+                status="warning",
+                session_id=session_id,
+                message=f"Table or schema issue: {str(e)}"
+            )
+            return []  # 빈 리스트 반환
         except Exception as e:
             self.logger.log_security_event(
                 event_type="database_read",
