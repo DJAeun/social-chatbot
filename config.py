@@ -63,13 +63,6 @@ def validate_config() -> None:
         "SUPABASE_KEY"
     ]
 
-    # LangSmith 환경변수 (선택 사항)
-    optional_vars = [
-        "LANGCHAIN_TRACING_V2",
-        "LANGCHAIN_PROJECT",
-        "LANGCHAIN_API_KEY"
-    ]
-
     missing_vars = []
     for var in required_vars:
         if not get_env(var, required=False):  # Streamlit secrets와 환경변수 모두 확인
@@ -78,18 +71,6 @@ def validate_config() -> None:
     if missing_vars:
         raise ConfigurationError(
             f"다음 필수 환경변수가 설정되지 않았습니다: {', '.join(missing_vars)}"
-        )
-
-    # LangSmith 환경변수 확인 (경고만 출력)
-    missing_optional = []
-    for var in optional_vars:
-        if not get_env(var, required=False):
-            missing_optional.append(var)
-
-    if missing_optional:
-        import warnings
-        warnings.warn(
-            f"LangSmith 추적 기능이 비활성화됩니다. 다음 환경변수가 설정되지 않았습니다: {', '.join(missing_optional)}"
         )
 
 
