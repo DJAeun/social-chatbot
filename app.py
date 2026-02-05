@@ -43,7 +43,14 @@ def load_chat_history():
             st.session_state.chat_history = history
             st.session_state.message_count = len(history)
         except DatabaseError as e:
-            st.error(f"대화 히스토리를 불러올 수 없습니다: {str(e)}")
+            st.error("대화 히스토리를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.")
+            logger = get_audit_logger()
+            logger.log_security_event(
+                event_type="error",
+                status="error",
+                session_id=st.session_state.session_id,
+                message=f"Failed to load chat history: {str(e)}"
+            )
 
 
 def display_chat_history():
@@ -137,7 +144,7 @@ def process_user_input(user_input: str):
 
     except DatabaseError as e:
         # DB 오류
-        st.error("데이터베이스 오류가 발생했습니다. 관리자에게 문의해주세요.")
+        st.error("데이터베이스 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
 
         logger.log_security_event(
             event_type="error",
@@ -246,13 +253,7 @@ def show_disclaimer_page():
         st.write("")
 
     with col2:
-        if st.button("❌ 거부하고 나가기", use_container_width=True):
-            st.markdown("""
-            <script>
-                window.top.location.href = 'https://www.google.com';
-            </script>
-            """, unsafe_allow_html=True)
-            st.stop()
+        st.link_button("❌ 거부하고 나가기", "https://www.google.com", use_container_width=True)
 
     with col3:
         st.write("")
@@ -484,7 +485,15 @@ def main():
     try:
         config.validate_config()
     except config.ConfigurationError as e:
-        st.error(f"설정 오류: {str(e)}")
+        st.error("서버 설정 오류가 발생했습니다. 관리자에게 문의해주세요.")
+        # 실제 에러는 로그에만 기록
+        logger = get_audit_logger()
+        logger.log_security_event(
+            event_type="error",
+            status="error",
+            session_id=st.session_state.session_id,
+            message=f"Configuration error: {str(e)}"
+        )
         st.stop()
 
     # 히스토리 로드

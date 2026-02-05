@@ -65,7 +65,7 @@ def validate_config() -> None:
 
     missing_vars = []
     for var in required_vars:
-        if not os.getenv(var):
+        if not get_env(var, required=False):  # Streamlit secrets와 환경변수 모두 확인
             missing_vars.append(var)
 
     if missing_vars:
