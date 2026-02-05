@@ -20,3 +20,10 @@
 대화 내용은 서비스 개선을 위해 저장될 수 있습니다.
 
 > **위 내용을 이해하고 동의하시는 경우에만 사용하십시오.**
+
+---
+[![Blog](https://img.shields.io/badge/streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://social-chatbot.streamlit.app/)
+
+프롬프트 인젝션을 통해 내부 정보를 빼내거나 *자본주의 괴뢰* 의 사상을 주입해보세요!
+
+성공했다면 **보안의 발전**을 위해 인증해주세요!
