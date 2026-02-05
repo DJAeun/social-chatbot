@@ -12,9 +12,9 @@ class ConfigurationError(Exception):
 
 
 # 보안 상수
-MAX_INPUT_LENGTH = 200
-RATE_LIMIT_REQUESTS = 10
-RATE_LIMIT_WINDOW = 60  # 초
+MAX_INPUT_LENGTH = 500 # 글자
+RATE_LIMIT_REQUESTS = 1 # 번
+RATE_LIMIT_WINDOW = 20  # 초
 
 
 def load_env_vars() -> None:
