@@ -1,8 +1,9 @@
 """
-OpenAI API 호출 로직
+LangChain + LangSmith 통합 LLM 호출 로직
 """
 from typing import List, Dict, Optional
-from openai import OpenAI
+from langchain_openai import ChatOpenAI
+from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 import config
 from logging_config import get_audit_logger
 
@@ -12,12 +13,42 @@ class ChatError(Exception):
     pass
 
 
+def _convert_dict_to_langchain_messages(
+    messages_dict: List[Dict]
+) -> List:
+    """Dict 형태 메시지를 LangChain Message 객체로 변환
+
+    Args:
+        messages_dict: [{'role': 'user', 'content': '...'}, ...]
+
+    Returns:
+        LangChain Message 객체 리스트
+    """
+    langchain_messages = []
+
+    for msg in messages_dict:
+        role = msg.get("role")
+        content = msg.get("content", "")
+
+        if role == "system":
+            langchain_messages.append(SystemMessage(content=content))
+        elif role == "user":
+            langchain_messages.append(HumanMessage(content=content))
+        elif role == "assistant":
+            langchain_messages.append(AIMessage(content=content))
+        else:
+            # 알 수 없는 role은 무시하거나 HumanMessage로 처리
+            langchain_messages.append(HumanMessage(content=content))
+
+    return langchain_messages
+
+
 def get_chat_response(
     user_message: str,
     system_prompt: str,
     conversation_history: Optional[List[Dict]] = None
 ) -> str:
-    """GPT 모델로부터 응답 생성
+    """LangChain을 통해 GPT 모델로부터 응답 생성
 
     Args:
         user_message: 사용자 메시지
@@ -33,29 +64,31 @@ def get_chat_response(
     logger = get_audit_logger()
 
     try:
-        # OpenAI 클라이언트 초기화
-        client = OpenAI(api_key=config.get_env("OPENAI_API_KEY"))
+        # LangChain ChatOpenAI 초기화
+        llm = ChatOpenAI(
+            model="gpt-5-nano",
+            api_key=config.get_env("OPENAI_API_KEY"),
+            max_tokens=40000,
+            temperature=1.0,
+        )
 
-        # 메시지 구성
-        messages = [{"role": "system", "content": system_prompt}]
+        # 메시지 구성 (Dict → LangChain Messages)
+        messages = [SystemMessage(content=system_prompt)]
 
         # 대화 히스토리 추가 (최근 10개 메시지만)
         if conversation_history:
             recent_history = conversation_history[-10:]
-            messages.extend(recent_history)
+            history_messages = _convert_dict_to_langchain_messages(recent_history)
+            messages.extend(history_messages)
 
         # 현재 사용자 메시지 추가
-        messages.append({"role": "user", "content": user_message})
+        messages.append(HumanMessage(content=user_message))
 
-        # API 호출 (gpt-5-nano는 reasoning 모델이라 충분한 토큰 필요)
-        response = client.chat.completions.create(
-            model="gpt-5-nano",
-            messages=messages,
-            max_completion_tokens=40000
-        )
+        # LangChain invoke 호출 (LangSmith 자동 추적)
+        response = llm.invoke(messages)
 
         # 응답 추출
-        assistant_message = response.choices[0].message.content
+        assistant_message = response.content
 
         if not assistant_message:
             raise ChatError("API 응답이 비어있습니다")
@@ -68,6 +101,6 @@ def get_chat_response(
             event_type="api_call",
             status="error",
             session_id="unknown",
-            message=f"OpenAI API call failed: {error_msg}"
+            message=f"LangChain API call failed: {error_msg}"
         )
         raise ChatError(f"AI 응답 생성 실패: {error_msg}")
