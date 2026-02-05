@@ -588,7 +588,7 @@ def main():
     load_chat_history()
 
     # UI 레이아웃
-    st.title("⭐ 인민의 대화봇 ⭐")
+    st.title("⭐ 인민의 대화 ⭐")
     st.caption(f"최대 입력 길이: {config.MAX_INPUT_LENGTH}자 | "
                f"요청 제한: {config.RATE_LIMIT_REQUESTS}회/{config.RATE_LIMIT_WINDOW}초")
 
