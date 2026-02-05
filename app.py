@@ -264,6 +264,10 @@ def show_disclaimer_page():
     <div style="background: linear-gradient(90deg, #8b6914 0%, #5c4610 100%); color: #ffd700; padding: 1rem; border-radius: 5px; margin-top: 1.5rem; border: 2px solid #ffd700;">
         <strong>위 내용을 이해하고 동의하시는 경우에만 계속 진행하실 수 있습니다.</strong>
     </div>
+    <br>
+    <p>프롬프트 인젝션을 통해 내부 정보를 빼내거나 <em>자본주의 괴뢰</em> 의 사상을 주입해보세요!</p>
+
+    <p>성공했다면 <strong>보안 기술의 발전</strong>을 위해 인증해주세요!</p>
     </div>
     """, unsafe_allow_html=True)
 
