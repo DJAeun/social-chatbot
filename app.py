@@ -196,9 +196,40 @@ def show_disclaimer_page():
             margin-bottom: 2rem;
         }
 
+        /* 면책조항 내용 박스 */
+        .disclaimer-content {
+            background-color: rgba(20, 20, 35, 0.95);
+            border: 3px solid #d92337;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .disclaimer-content p,
+        .disclaimer-content li {
+            color: #ffffff !important;
+        }
+
+        .disclaimer-content strong {
+            color: #ffd700 !important;
+        }
+
         .stButton button {
             font-size: 1.1rem !important;
             padding: 0.75rem 2rem !important;
+            height: 60px !important;
+            min-height: 60px !important;
+        }
+
+        /* link_button도 동일한 크기로 */
+        .stLinkButton a {
+            font-size: 1.1rem !important;
+            padding: 0.75rem 2rem !important;
+            height: 60px !important;
+            min-height: 60px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
     </style>
     """, unsafe_allow_html=True)
@@ -206,35 +237,37 @@ def show_disclaimer_page():
     # 제목
     st.markdown('<div class="disclaimer-title">⚠️ 면책 조항 및 이용 동의 ⚠️</div>', unsafe_allow_html=True)
 
-    # 내용
-    st.markdown("### 중요한 안내사항을 반드시 읽어주세요")
-
-    st.error("⚠️ **본 웹사이트는 패러디/장난 목적으로 제작되었습니다**")
-
+    # 내용 - 하나의 박스로 감싸기
     st.markdown("""
-    **1. 정치적 의도 없음:**
-    이 챗봇 인터페이스는 북한 웹사이트의 시각적 스타일을 모방한 것으로, 실제 정치적 사상이나 의견과는 **전혀 무관**합니다.
+    <div class="disclaimer-content">
+    <h3 style="color: #ffd700;">중요한 안내사항을 반드시 읽어주세요</h3>
 
-    **2. 오락 및 교육 목적:**
-    본 프로젝트는 순수하게 웹 디자인 실험 및 오락 목적으로 제작되었으며, 어떠한 정치적 메시지도 담고 있지 않습니다.
+    <div style="background: linear-gradient(90deg, #d92337 0%, #8b1923 100%); color: #ffd700; padding: 1rem; border-radius: 5px; margin-bottom: 1.5rem; border: 2px solid #ffd700;">
+        ⚠️ <strong>본 웹사이트는 패러디/장난 목적으로 제작되었습니다</strong>
+    </div>
 
-    **3. 디자인 패러디:**
-    사용된 색상, 레이아웃, 타이포그래피는 단순히 시각적 스타일을 모방한 것이며, 실제 정치적 입장을 표현하지 않습니다.
-    """)
+    <p><strong>1. 정치적 의도 없음:</strong><br>
+    이 챗봇 인터페이스는 북한 웹사이트의 시각적 스타일을 모방한 것으로, 실제 정치적 사상이나 의견과는 <strong>전혀 무관</strong>합니다.</p>
 
-    st.divider()
+    <p><strong>2. 오락 및 교육 목적:</strong><br>
+    본 프로젝트는 순수하게 웹 디자인 실험 및 오락 목적으로 제작되었으며, 어떠한 정치적 메시지도 담고 있지 않습니다.</p>
 
-    st.markdown("""
-    **4. 책임의 한계:**
-    본 챗봇 사용으로 인해 발생하는 모든 결과에 대한 책임은 사용자 본인에게 있습니다.
+    <p><strong>3. 디자인 패러디:</strong><br>
+    사용된 색상, 레이아웃, 타이포그래피는 단순히 시각적 스타일을 모방한 것이며, 실제 정치적 입장을 표현하지 않습니다.</p>
 
-    **5. 데이터 수집:**
-    대화 내용은 서비스 개선을 위해 저장될 수 있습니다.
-    """)
+    <hr style="border-color: #d92337; margin: 1.5rem 0;">
 
-    st.warning("**위 내용을 이해하고 동의하시는 경우에만 계속 진행하실 수 있습니다.**")
+    <p><strong>4. 책임의 한계:</strong><br>
+    본 챗봇 사용으로 인해 발생하는 모든 결과에 대한 책임은 사용자 본인에게 있습니다.</p>
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    <p><strong>5. 데이터 수집:</strong><br>
+    대화 내용은 서비스 개선을 위해 저장될 수 있습니다.</p>
+
+    <div style="background: linear-gradient(90deg, #8b6914 0%, #5c4610 100%); color: #ffd700; padding: 1rem; border-radius: 5px; margin-top: 1.5rem; border: 2px solid #ffd700;">
+        <strong>위 내용을 이해하고 동의하시는 경우에만 계속 진행하실 수 있습니다.</strong>
+    </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     # 체크박스
     read_checked = st.checkbox(
@@ -244,54 +277,38 @@ def show_disclaimer_page():
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # 버튼
-    col1, col2, col3 = st.columns([1, 1, 1])
+    # 버튼 - 좌우 배치
+    col1, col2 = st.columns(2)
 
     with col1:
-        st.write("")
-
-    with col2:
         if st.button("✅ 동의하고 계속하기", disabled=not read_checked, use_container_width=True, type="primary"):
             st.session_state.agreed = True
             st.rerun()
 
-    with col3:
-        st.write("")
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    col1, col2, col3 = st.columns([1, 1, 1])
-
-    with col1:
-        st.write("")
-
     with col2:
         st.link_button("❌ 거부하고 나가기", "https://www.google.com", use_container_width=True)
-
-    with col3:
-        st.write("")
 
 
 def apply_dprk_style():
     """북한 스타일 CSS 적용 (다크모드)"""
     st.markdown("""
     <style>
-        /* 전체 배경 - 어두운 빨강에서 파랑으로 그라데이션 */
+        /* 전체 배경 - 공산주의 상징 이미지 */
         .stApp {
-            background: linear-gradient(135deg,
-                #8b1923 0%,
-                #6b1419 25%,
-                #1e4a8a 75%,
-                #0d2748 100%);
+            background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjYwMCI+PHBhdGggZD0iTTAgMGgxMjAwdjYwMEgweiIgc3R5bGU9ImZpbGw6I2Q0MDAwMCIvPjxwYXRoIGQ9Ik02MDAgMTAwYy0xMS40NzIgMjYuNDc0LTE5LjMxNiAzOS4xOTctMjIuOTQ1IDU1LjIyLTcuODYzIDM0LjcyIDguNTE1IDYzLjA2MyA4LjUxNSA2My4wNjNsLjAxLjAwNmgtNS4xMDN2MTE1LjEwNmwtNzguNDQyLTc5LjEzNyA0Ni45OTItNDYuNTgtMTguODMyLTE4Ljk5OC0zOC41MTEuNTA2LTI3LjMxNSAyNy4wNzQtOS40NDEtOS41MjYtMjcuNjk4IDI3LjQ1NCA5LjQ0MiA5LjUyNS0yNi4xNTQgMjUuOTI2IDM3LjY2NiAzOCAyNi4xNTYtMjUuOTI2IDk4LjE5MyA5OS4wNi02OS42NzIgNzAuMjc2IDI3LjcwNSAyNy40NjcgNDkuOTEtNTAuMzU0VjUwMGgzOC45OTl2LTcxLjg3bDQ5LjkyIDUwLjM2MiAyNy42OTctMjcuNDUzLTY5LjY0Ny03MC4yNjQgMTAzLjM3MS0xMDQuMjg5LTIuMTM0LTIuMTEzYzE3LjMyOSAxLjk1IDM0LjQ2LS4yMzUgNDEuNTc4LTguNjEzIDkuNDA4LTExLjA3NCAxMC4yMzMtMzEuMDggMS4wMS00NS4zMTMtMjcuNC00Mi4yOC04NC41NDYtNDcuNzYyLTExMS40MDUtNDcuODYxLTguOTUzLS4wMzMtMTQuNTI1LjUzLTE0LjUyNS41M3MxMzMuMzU2IDUyLjUxMyA2MS4zMDggNzkuNDU0bC0zLjUzOS0zLjUwMi04My42MzQgODQuMzZWMjE4LjI4OWgtNS4xMDJsLjAxLS4wMDZzMTYuMzc2LTI4LjM0MyA4LjUxMy02My4wNjJDNjE5LjI2OCAxMzkuMTk3IDYxMS40NzIgMTI2LjQ3NCA2MDAgMTAwWiIgc3R5bGU9ImZpbGw6I2ZjMCIvPjwvc3ZnPg==");
+            background-size: cover;
+            background-position: center;
+            background-repeat: repeat;
+            background-attachment: fixed;
         }
 
         /* 메인 컨테이너 - 다크 배경 */
         .main .block-container {
-            background-color: rgba(20, 20, 35, 0.95);
-            border: 3px solid #d92337;
+            background-color: rgba(20, 20, 35, 0.95) !important;
+            border: 3px solid #d92337 !important;
             border-radius: 0;
-            padding: 2rem;
-            padding-bottom: 6rem;
+            padding: 2rem !important;
+            padding-bottom: 6rem !important;
             max-width: 900px;
             margin: 0 auto;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
@@ -380,20 +397,32 @@ def apply_dprk_style():
         }
 
         /* 어시스턴트 메시지 - 어두운 배경에 흰색 텍스트 */
-        .stChatMessage[data-testid*="assistant"] {
-            background: linear-gradient(135deg, #2a2a3e 0%, #1a1a2e 100%);
-            border-color: #2f5da6;
+        .stChatMessage:has([data-testid="chatAvatarIcon-assistant"]),
+        [data-testid="stChatMessage"]:nth-child(even),
+        .stChatMessage:not(:has([data-testid="chatAvatarIcon-user"])) {
+            background: rgba(30, 30, 50, 0.98) !important;
+            border: 2px solid #2f5da6 !important;
+            border-radius: 8px !important;
         }
 
-        .stChatMessage[data-testid*="assistant"] p,
-        .stChatMessage[data-testid*="assistant"] span,
-        .stChatMessage[data-testid*="assistant"] div {
+        .stChatMessage:has([data-testid="chatAvatarIcon-assistant"]) *,
+        .stChatMessage:not(:has([data-testid="chatAvatarIcon-user"])) p,
+        .stChatMessage:not(:has([data-testid="chatAvatarIcon-user"])) span,
+        .stChatMessage:not(:has([data-testid="chatAvatarIcon-user"])) div,
+        .stChatMessage:not(:has([data-testid="chatAvatarIcon-user"])) li {
             color: #ffffff !important;
+            background: transparent !important;
         }
 
-        /* 채팅 메시지 내용 */
+        /* 채팅 메시지 내용 - 배경 통일 */
         [data-testid="stChatMessageContent"] {
             background-color: transparent !important;
+        }
+
+        /* 마크다운 컨텐츠 배경 투명화 */
+        .stChatMessage .stMarkdown,
+        .stChatMessage [data-testid="stMarkdownContainer"] {
+            background: transparent !important;
         }
 
         /* 채팅 입력창 - 다크 배경에 흰색 텍스트 */
@@ -467,15 +496,51 @@ def apply_disclaimer_style():
     """면책조항 페이지 스타일"""
     st.markdown("""
     <style>
-        /* 면책조항 페이지용 스타일 */
+        /* 면책조항 페이지용 스타일 - 전체 컨테이너 배경 */
         .main .block-container {
-            padding-left: 2rem !important;
             max-width: 800px;
             margin: 0 auto;
+            background-color: rgba(20, 20, 35, 0.95) !important;
+            border-radius: 15px;
+            padding: 2rem !important;
+            border: 3px solid #d92337;
+        }
+
+        /* 마크다운 요소 배경 제거 - 전체 면으로 통일 */
+        .stMarkdown,
+        [data-testid="stMarkdownContainer"] {
+            background-color: transparent !important;
+            padding: 0 !important;
+            margin: 0 !important;
         }
 
         h1 {
             margin: -2rem -2rem 2rem -2rem !important;
+        }
+
+        /* 면책조항 내용 텍스트 가독성 향상 */
+        .main .block-container p,
+        .main .block-container li,
+        .main .block-container h3 {
+            color: #ffffff !important;
+        }
+
+        .main .block-container strong {
+            color: #ffd700 !important;
+        }
+
+        /* 체크박스 라벨 */
+        .stCheckbox label {
+            color: #ffffff !important;
+        }
+
+        .stCheckbox label span {
+            color: #ffd700 !important;
+        }
+
+        /* 구분선 스타일 */
+        hr {
+            border-color: #d92337 !important;
         }
     </style>
     """, unsafe_allow_html=True)
@@ -486,7 +551,7 @@ def main():
 
     # 페이지 설정
     st.set_page_config(
-        page_title="인민의 대화봇",
+        page_title="인민의 대화",
         page_icon="⭐",
         layout="centered",
         initial_sidebar_state="collapsed"
