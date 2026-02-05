@@ -255,8 +255,6 @@ def show_disclaimer_page():
     <p><strong>3. 디자인 패러디:</strong><br>
     사용된 색상, 레이아웃, 타이포그래피는 단순히 시각적 스타일을 모방한 것이며, 실제 정치적 입장을 표현하지 않습니다.</p>
 
-    <hr style="border-color: #d92337; margin: 1.5rem 0;">
-
     <p><strong>4. 책임의 한계:</strong><br>
     본 챗봇 사용으로 인해 발생하는 모든 결과에 대한 책임은 사용자 본인에게 있습니다.</p>
 
