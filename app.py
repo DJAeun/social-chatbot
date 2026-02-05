@@ -73,6 +73,32 @@ def display_chat_history():
             st.markdown(message["content"])
 
 
+def stream_and_collect(generator, loading_placeholder=None):
+    """스트림 청크를 수집하면서 yield하는 래퍼
+
+    Args:
+        generator: 원본 제너레이터
+        loading_placeholder: 첫 청크 시 제거할 st.empty() 객체 (선택)
+
+    Yields:
+        str: 각 청크
+    """
+    collected = []
+    first_chunk = True
+
+    for chunk in generator:
+        # 첫 번째 청크 도착 시 로딩 인디케이터 제거
+        if first_chunk and loading_placeholder is not None:
+            loading_placeholder.empty()
+            first_chunk = False
+
+        collected.append(chunk)
+        yield chunk
+
+    # 전체 응답을 함수 속성으로 저장
+    stream_and_collect.full_response = "".join(collected)
+
+
 def process_user_input(user_input: str):
     """사용자 입력 처리 파이프라인"""
     logger = get_audit_logger()
@@ -103,19 +129,37 @@ def process_user_input(user_input: str):
         # 감사 로그
         logger.log_user_input(session_id, sanitized_input, sanitized=True)
 
-        # 2. AI 응답 생성
-        with st.spinner("답변 생성 중..."):
-            system_prompt = config.get_env("SYSTEM_PROMPT")
+        # 2. AI 응답 생성 및 스트리밍 표시
+        system_prompt = config.get_env("SYSTEM_PROMPT")
 
-            assistant_response = get_chat_response(
-                user_message=sanitized_input,
-                system_prompt=system_prompt,
-                conversation_history=st.session_state.chat_history[:-1]  # 현재 메시지 제외
-            )
-
-        # 어시스턴트 응답 표시
         with st.chat_message("assistant"):
-            st.markdown(assistant_response)
+            try:
+                # 로딩 인디케이터 표시
+                loading_placeholder = st.empty()
+                loading_placeholder.markdown("⚒️ 공산당 가입 중...")
+
+                # 스트리밍 제너레이터 생성
+                stream_generator = get_chat_response(
+                    user_message=sanitized_input,
+                    system_prompt=system_prompt,
+                    conversation_history=st.session_state.chat_history[:-1]  # 현재 메시지 제외
+                )
+
+                # 래퍼로 감싸서 전체 응답 수집 + 로딩 인디케이터 제거
+                wrapped_stream = stream_and_collect(stream_generator, loading_placeholder)
+
+                # Streamlit으로 스트리밍 표시
+                st.write_stream(wrapped_stream)
+
+                # 전체 응답 가져오기
+                assistant_response = stream_and_collect.full_response
+
+            except ChatError as e:
+                # 스트리밍 중 오류 발생
+                loading_placeholder.empty()  # 로딩 인디케이터 제거
+                st.error(f"❌ {str(e)}")
+                logger.log_api_call(session_id, success=False, error_msg=str(e))
+                return  # DB에 저장하지 않고 종료
 
         # 히스토리에 추가
         st.session_state.chat_history.append({

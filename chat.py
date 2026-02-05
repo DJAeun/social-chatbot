@@ -1,7 +1,7 @@
 """
 OpenAI API 호출 로직
 """
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Generator
 from openai import OpenAI
 import config
 from logging_config import get_audit_logger
@@ -16,16 +16,16 @@ def get_chat_response(
     user_message: str,
     system_prompt: str,
     conversation_history: Optional[List[Dict]] = None
-) -> str:
-    """GPT 모델로부터 응답 생성
+) -> Generator[str, None, None]:
+    """GPT 모델로부터 스트리밍 응답 생성
 
     Args:
         user_message: 사용자 메시지
         system_prompt: 시스템 프롬프트
         conversation_history: 대화 히스토리 [{'role': 'user', 'content': '...'}, ...]
 
-    Returns:
-        어시스턴트 응답 텍스트
+    Yields:
+        str: 각 응답 청크
 
     Raises:
         ChatError: API 호출 실패 시
@@ -47,20 +47,25 @@ def get_chat_response(
         # 현재 사용자 메시지 추가
         messages.append({"role": "user", "content": user_message})
 
-        # API 호출 (gpt-5-nano는 reasoning 모델이라 충분한 토큰 필요)
-        response = client.chat.completions.create(
+        # 스트리밍 API 호출 (gpt-5-nano는 reasoning 모델이라 충분한 토큰 필요)
+        stream = client.chat.completions.create(
             model="gpt-5-nano",
             messages=messages,
-            max_completion_tokens=40000
+            max_completion_tokens=40000,
+            stream=True,  # 스트리밍 활성화
+            timeout=60.0  # 타임아웃 설정
         )
 
-        # 응답 추출
-        assistant_message = response.choices[0].message.content
+        # 각 청크를 yield
+        chunk_count = 0
+        for chunk in stream:
+            if chunk.choices[0].delta.content is not None:
+                chunk_count += 1
+                yield chunk.choices[0].delta.content
 
-        if not assistant_message:
+        # 빈 응답 검증
+        if chunk_count == 0:
             raise ChatError("API 응답이 비어있습니다")
-
-        return assistant_message
 
     except Exception as e:
         error_msg = str(e)
