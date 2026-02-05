@@ -1,0 +1,162 @@
+# ==========================================
+# 보안 관련 - API 키 및 민감정보
+# ==========================================
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+*.p12
+*.pfx
+credentials.json
+service-account*.json
+
+# Streamlit Secrets (Streamlit Cloud에서 직접 설정)
+.streamlit/secrets.toml
+
+# ==========================================
+# 데이터베이스 관련
+# ==========================================
+*.db
+*.sqlite
+*.sqlite3
+*.sql
+*.dump
+db_backup/
+backups/
+
+# ==========================================
+# 로그 파일 및 디버그
+# ==========================================
+logs/
+*.log
+debug.log
+error.log
+access.log
+audit.log
+
+# ==========================================
+# Python 관련
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ==========================================
+# 가상환경
+# ==========================================
+venv/
+ENV/
+env/
+.venv
+virtualenv/
+
+# ==========================================
+# IDE 관련
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# ==========================================
+# OS 관련
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ==========================================
+# 임시 파일 및 캐시
+# ==========================================
+*.tmp
+*.temp
+*.bak
+*.swp
+*.cache
+.cache/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+
+# ==========================================
+# 세션 및 사용자 데이터
+# ==========================================
+sessions/
+uploads/
+downloads/
+user_data/
+*.session
+
+# ==========================================
+# 문서 파일 (내부용)
+# ==========================================
+IMPLEMENTATION_SUMMARY.md
+QUICKSTART.md
+TESTING.md
+z_git_diff.md
+TODO.md
+NOTES.md
+
+# ==========================================
+# Claude Desktop 설정
+# ==========================================
+.claude/
+
+# ==========================================
+# 테스트 및 개발용
+# ==========================================
+test_data/
+mock_data/
+.env.test
+.env.development
+*.test.db
+
+# ==========================================
+# 백업 파일
+# ==========================================
+*.backup
+*.old
+*.orig
+*_backup
+*_old
+
+# ==========================================
+# 보안 스캔 결과
+# ==========================================
+security-scan-results/
+vulnerability-report/

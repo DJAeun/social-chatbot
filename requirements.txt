@@ -1,0 +1,6 @@
+streamlit==1.28.1
+openai==1.0.1
+python-dotenv==1.0.0
+bleach==6.1.0
+html5lib==1.1
+supabase==2.3.0
