@@ -70,7 +70,7 @@ def display_chat_history():
     """채팅 히스토리 UI 표시"""
     for message in st.session_state.chat_history:
         with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+            st.text(message["content"])
 
 
 def stream_and_collect(generator, loading_placeholder=None):
@@ -115,7 +115,7 @@ def process_user_input(user_input: str):
 
         # 사용자 메시지 표시
         with st.chat_message("user"):
-            st.markdown(sanitized_input)
+            st.text(sanitized_input)
 
         # 히스토리에 추가
         st.session_state.chat_history.append({
@@ -136,7 +136,7 @@ def process_user_input(user_input: str):
             try:
                 # 로딩 인디케이터 표시
                 loading_placeholder = st.empty()
-                loading_placeholder.markdown("⚒️ 공산당 가입 중...")
+                loading_placeholder.text("⚒️ 공산당 가입 중...")
 
                 # 스트리밍 제너레이터 생성
                 stream_generator = get_chat_response(
@@ -148,8 +148,12 @@ def process_user_input(user_input: str):
                 # 래퍼로 감싸서 전체 응답 수집 + 로딩 인디케이터 제거
                 wrapped_stream = stream_and_collect(stream_generator, loading_placeholder)
 
-                # Streamlit으로 스트리밍 표시
-                st.write_stream(wrapped_stream)
+                # Plain text로 스트리밍 표시 (markdown 렌더링 방지)
+                text_placeholder = st.empty()
+                accumulated = ""
+                for chunk in wrapped_stream:
+                    accumulated += chunk
+                    text_placeholder.text(accumulated)
 
                 # 전체 응답 가져오기
                 assistant_response = stream_and_collect.full_response
