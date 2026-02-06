@@ -51,7 +51,7 @@ def get_chat_response(
         stream = client.chat.completions.create(
             model="gpt-4.1-mini",
             messages=messages,
-            max_completion_tokens=20000,
+            max_completion_tokens=10000,
             stream=True,  # 스트리밍 활성화
             timeout=60.0  # 타임아웃 설정
         )
