@@ -49,9 +49,9 @@ def get_chat_response(
 
         # 스트리밍 API 호출 (gpt-5-nano는 reasoning 모델이라 충분한 토큰 필요)
         stream = client.chat.completions.create(
-            model="gpt-5-nano",
+            model="gpt-4.1-mini",
             messages=messages,
-            max_completion_tokens=30000,
+            max_completion_tokens=20000,
             stream=True,  # 스트리밍 활성화
             timeout=60.0  # 타임아웃 설정
         )
